@@ -17,24 +17,40 @@
 /******************************************
   Provider configuration
  *****************************************/
-provider "google" {
-  version = "~> 3.3"
-}
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "3.65.0"
+    }
 
-provider "google-beta" {
-  version = "~> 3.3"
+    google-beta = {
+      source  = "hashicorp/google"
+      version = "3.65.0"
+    }
+  }
 }
 
 module "simple-composer-environment" {
   source = "../../modules/create_environment"
 
-  project_id                       = var.project_id
-  composer_env_name                = var.composer_env_name
-  region                           = var.region
-  composer_service_account         = var.composer_service_account
-  network                          = var.network
-  subnetwork                       = var.subnetwork
-  use_ip_aliases                   = true
+  project_id               = var.project_id
+  composer_env_name        = var.composer_env_name
+  region                   = var.region
+  composer_service_account = var.composer_service_account
+  network                  = var.network
+  subnetwork               = var.subnetwork
+  use_ip_aliases           = true
+  tags                     = ["composer-nodes"]
+
+  enable_private_endpoint          = true
   pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
   service_ip_allocation_range_name = var.service_ip_allocation_range_name
+  master_ipv4_cidr                 = "10.13.0.0/28"
+  web_server_ipv4_cidr             = "10.13.1.0/28"
+  cloud_sql_ipv4_cidr              = "10.13.2.0/24"
+
+  machine_type  = "n1-standard-1"
+  zone          = "europe-west2-b"
+  image_version = "composer-1.16.2-airflow-1.10.15"
 }
