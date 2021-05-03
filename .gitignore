@@ -43,3 +43,6 @@ crash.log
 **/*.tfvars
 
 credentials.json
+
+# IDE
+.idea
